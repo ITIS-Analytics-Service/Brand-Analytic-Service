@@ -1,5 +1,4 @@
-# Auth API
-
+# Auth API  (публичный, через gateway)
 ## 1. Регистрация пользователя
 ```http request
 POST  /auth/register
