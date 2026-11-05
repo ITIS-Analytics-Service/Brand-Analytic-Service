@@ -14,7 +14,7 @@ GET /mentions
 | Параметр         | Тип      | Описание                                                      |
 |------------------|----------|---------------------------------------------------------------|
 | q                | String   | Полнотекстовый по _title_ + _text_                            |
-| sentiment        | Enum     | _POSITIVE_/_NEGATIVE_/_NEUTRAL_/_MIXED_ (можно через запятую) |
+| sentiment        | Enum     | _POSITIVE_/_NEGATIVE_/_NEUTRAL_ (можно через запятую) |
 | sourceId         | String   | _web_search_, _vk_search_ и др.                               |
 | domain           | String   | _example.com_                                                 |
 | from, to         | ISO-8601 | по _publishedAt_                                              |
@@ -41,8 +41,7 @@ GET /mentions
         "label": "POSITIVE",
         "score": 0.82,
         "modelVersion": "v1-lexicon"
-      },
-      "relevance": 0.91
+      }
     }
   ],
   "page": 0, "size": 20, "totalElements": 137, "totalPages": 7
@@ -74,8 +73,7 @@ GET /mentions/{mentionId}
     "label": "POSITIVE",
     "score": 0.82,
     "modelVersion": "v1-lexicon"
-  },
-  "relevance": 0.91,
+  }
   "themes": ["performance", "price"]
 }
 ```
