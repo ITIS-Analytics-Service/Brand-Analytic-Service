@@ -55,7 +55,7 @@ PUT /brands/me
 
 - brandName: 1...100 символов;
 - intervalMinutes: null или 5..1440;
-- selectedSources: каждый d существует в source_catalog;
+- selectedSources: каждый id существует в source_catalog;
 - При создании: lastCoveredUntil = null, nextRunAt = null (Scheduler выставит после первого завершённого job'а.
 
 ## 2) Keywords
@@ -166,7 +166,7 @@ DELETE /brands/me/exclusions/{id}
 Справочник (общий, не per-user).
 
 ```http request
-GET /soruces
+GET /sources
 ```
 
 **Response 200**:
@@ -257,7 +257,7 @@ GET /monitoring-jobs
 | trigger                | enum     | SCHEDULED/MANUAL                                |
 | status                 | enum     | фильтр по статусу(можно несколько через запятую |
 | requestedSinceFrom     | ISO-8601 | jobs, чей requestedSince >= X                   |
-| requestUntilTO         | ISO-8601 | jobs, чей requestedSince <= X                   |
+| requestedUntilTo         | ISO-8601 | jobs, чей requestedSince <= X                   |
 | startedFrom, startedTo | ISO-8601 | по startedAt                                    |
 | page, size, sort       | -        | default startedAt, desc                         |  
 
