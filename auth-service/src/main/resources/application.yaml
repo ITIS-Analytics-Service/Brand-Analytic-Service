@@ -8,3 +8,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/brand_analytics_auth_service_db
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
+
+app:
+  jwt:
+    access-expiration: 15m
+    refreshExpiration: 7d
+    secret: ${JWT_SECRET}

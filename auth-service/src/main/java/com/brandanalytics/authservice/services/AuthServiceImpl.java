@@ -1,13 +1,16 @@
 package com.brandanalytics.authservice.services;
 
-import com.brandanalytics.authservice.dto.AuthResponse;
-import com.brandanalytics.authservice.dto.RegisterResponse;
-import com.brandanalytics.authservice.dto.UserCreateRequest;
-import com.brandanalytics.authservice.dto.UserLoginRequest;
+import com.brandanalytics.authservice.dto.*;
 import com.brandanalytics.authservice.exceptions.UserEmailAlreadyExistsException;
 import com.brandanalytics.authservice.models.Role;
 import com.brandanalytics.authservice.models.User;
 import com.brandanalytics.authservice.repositories.UserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +26,18 @@ public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
+
+    private final UserDetailsService userDetailsService;
+
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, UserDetailsService userDetailsService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -49,10 +61,43 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse authenticate(UserLoginRequest request) {
-        return null;
+    public TokenPair authenticate(UserLoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.email(),
+                        request.password()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return jwtService.generateTokenPair(authentication);
     }
 
+    @Override
+    public TokenPair refreshToken(RefreshTokenRequest request) {
+        String refreshToken = request.refreshToken();
+
+        if (!jwtService.isRefreshToken(refreshToken) {
+            throw new IllegalArgumentException(("Invalid refresh token"));
+        }
+
+        String username = jwtService.extractUsernameFromToken(refreshToken);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        if (userDetails == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails.getUsername(),
+                null,
+                userDetails.getAuthorities()
+        );
+
+        String accessToken = jwtService.generateAccessToken(authentication);
+        return new TokenPair(accessToken, refreshToken);
+    }
 
     private String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
