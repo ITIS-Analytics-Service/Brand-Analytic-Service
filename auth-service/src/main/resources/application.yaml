@@ -1,3 +1,10 @@
 spring:
   application:
     name: auth-service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:postgresql://localhost:5432/brand_analytics_auth_service_db
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}

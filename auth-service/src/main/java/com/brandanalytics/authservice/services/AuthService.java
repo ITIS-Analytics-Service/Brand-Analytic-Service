@@ -5,7 +5,7 @@ import com.brandanalytics.authservice.dto.RegisterResponse;
 import com.brandanalytics.authservice.dto.UserCreateRequest;
 import com.brandanalytics.authservice.dto.UserLoginRequest;
 
-public interface UserService {
+public interface AuthService {
 
     RegisterResponse createUser(UserCreateRequest request);
 
